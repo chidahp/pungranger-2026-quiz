@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Box, Button, Modal, Stack, Typography } from "@mui/material";
+import { Box, Button, Modal, Stack, Typography, Tooltip } from "@mui/material";
 import MatrixBackground from "../../components/MatrixBackground";
+import { useResponsive } from "@/app/hook/useResponsive";
 
 const STORAGE_KEY = "quiz-result";
 const PROCESSING_DURATION_MS = 2800;
@@ -70,6 +71,7 @@ function getResultBand(score: number): ResultBand {
 
 export default function QuizAnswersPage() {
   const router = useRouter();
+  const { isMobile } = useResponsive();
   const [isProcessing, setIsProcessing] = useState(true);
   const [result, setResult] = useState<StoredResult | null>(null);
   const [showShare, setShowShare] = useState(false);
@@ -77,8 +79,6 @@ export default function QuizAnswersPage() {
   const [shareState, setShareState] = useState<"idle" | "loading" | "error">(
     "idle"
   );
-  const shareTip =
-    "แชร์ผลลง IG Story แล้ว Tag @Chidahp ด้วยนะ";
 
   useEffect(() => {
     const raw = typeof window !== "undefined" ? sessionStorage.getItem(STORAGE_KEY) : null;
@@ -124,7 +124,7 @@ export default function QuizAnswersPage() {
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
         await navigator.share({
           title: "สิ้นสุดทางเชื่อ Quiz",
-          text: "ลองทำแบบทดสอบนี้สิ",
+          text: "ลองทำแบบทดสอบนี้สิ ที่นี่เลย! https://pungranger2026.chidahp.com",
           files: [file],
         });
       } else {
@@ -158,16 +158,16 @@ export default function QuizAnswersPage() {
     }
   };
 
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopyState("done");
-      setTimeout(() => setCopyState("idle"), 1500);
-    } catch {
-      setCopyState("done");
-      setTimeout(() => setCopyState("idle"), 1500);
-    }
-  };
+  // const handleCopyLink = async () => {
+  //   try {
+  //     await navigator.clipboard.writeText(window.location.href);
+  //     setCopyState("done");
+  //     setTimeout(() => setCopyState("idle"), 1500);
+  //   } catch {
+  //     setCopyState("done");
+  //     setTimeout(() => setCopyState("idle"), 1500);
+  //   }
+  // };
 
   if (result === null) {
     return (
@@ -254,8 +254,8 @@ export default function QuizAnswersPage() {
                 <div 
                   className="relative top-70 z-10 mx-auto mt-6 w-full max-w-[340px] rounded-2xl border border-[#00ff41]/30 bg-black/75 p-4 shadow-[0_18px_38px_rgba(0,0,0,0.55)] backdrop-blur"
                   style={{
-                    zoom: '85%',
-                    top: '24rem'
+                    zoom: isMobile ? '70%' : '85%',
+                    top: isMobile ? '455px' : '24rem'
                   }}
                 >
                   <div className="flex flex-col gap-3">
@@ -271,7 +271,7 @@ export default function QuizAnswersPage() {
                       }}
                     >
                       <span aria-hidden>📖</span>
-                      พรีหนังสือ
+                      พรีหนังสือ (กดเล้ยยยย!!!!)
                     </Link>
                     <button
                       type="button"
@@ -310,62 +310,56 @@ export default function QuizAnswersPage() {
             p: 3,
           }}
         >
-          <Stack direction="row" alignItems="start" justifyContent="space-between" gap={1}>
+          <Stack direction="column" spacing={0.5} mb={1}>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+              <Typography
+                fontFamily="var(--font-geist-mono)"
+                fontSize={14}
+                fontWeight={700}
+                color="#00ff41"
+              >
+                แชร์ผลของคุณ
+              </Typography>
+            </Stack>
             <Typography
+              fontSize={12}
+              color="#a1a1aa"
               fontFamily="var(--font-geist-mono)"
-              fontSize={14}
-              fontWeight={700}
-              color="#00ff41"
             >
-              แชร์ผลของคุณ
+              แชร์ IG Story แล้วแท็ก @Chidahp @pangranger.co
             </Typography>
           </Stack>
 
-          <Box
-            mt={2}
-            border="1px solid #2f2f2f"
-            borderRadius={2}
-            overflow="hidden"
-            bgcolor="#111"
-          >
-            <Box p={2}>
-              <Typography fontSize={14} fontWeight={700} color="#e4e4e7">
-                {band.title}
-              </Typography>
-              <Typography mt={0.5} fontSize={12} color="#a1a1aa">
-                {band.description}
-              </Typography>
-              <Typography mt={1} fontSize={11} color="rgba(0,255,65,0.8)">
-                ลิงก์ผลลัพธ์: {typeof window !== "undefined" ? window.location.href : ""}
-              </Typography>
-            </Box>
-          </Box>
-
           <Stack mt={3} spacing={1.2}>
-            <Button
-              onClick={() => handleShareImage(band.image)}
-              variant="outlined"
-              sx={{
-                borderColor: "#E1306C",
-                color: "#E1306C",
-                bgcolor: "rgba(225,48,108,0.15)",
-                textTransform: "none",
-                fontFamily: "var(--font-geist-mono)",
-                fontWeight: 700,
-                minHeight: 48,
-                "&:hover": {
-                  borderColor: "#E1306C",
-                  bgcolor: "rgba(225,48,108,0.25)",
-                  transform: "scale(1.02)",
-                },
-              }}
-            >
-              {shareState === "loading"
-                ? "กำลังแชร์..."
-                : shareState === "error"
-                  ? "ลองใหม่อีกครั้ง"
-                  : "แชร์ภาพนี้"}
-            </Button>
+            <Tooltip title="แชร์ IG Story แล้วอย่าลืมแท็ก @Chidahp @pangranger.co" placement="top">
+              <span>
+                <Button
+                  className="w-full"
+                  onClick={() => handleShareImage(band.image)}
+                  variant="outlined"
+                  sx={{
+                    borderColor: "#E1306C",
+                    color: "#E1306C",
+                    bgcolor: "rgba(225,48,108,0.15)",
+                    textTransform: "none",
+                    fontFamily: "var(--font-geist-mono)",
+                    fontWeight: 700,
+                    minHeight: 48,
+                    "&:hover": {
+                      borderColor: "#E1306C",
+                      bgcolor: "rgba(225,48,108,0.25)",
+                      transform: "scale(1.02)",
+                    },
+                  }}
+                >
+                  {shareState === "loading"
+                    ? "กำลังแชร์..."
+                    : shareState === "error"
+                      ? "ลองใหม่อีกครั้ง"
+                      : "แชร์ภาพนี้"}
+                </Button>
+              </span>
+            </Tooltip>
             <Button
               onClick={() => handleDownloadImage(band.image)}
               variant="outlined"
@@ -386,7 +380,7 @@ export default function QuizAnswersPage() {
             >
               ดาวน์โหลดภาพ
             </Button>
-            <Button
+            {/* <Button
               onClick={handleCopyLink}
               variant="outlined"
               sx={{
@@ -404,7 +398,7 @@ export default function QuizAnswersPage() {
               }}
             >
               {copyState === "done" ? "คัดลอกแล้ว" : "คัดลอกลิงก์"}
-            </Button>
+            </Button> */}
             <Button
               onClick={() => setShowShare(false)}
               variant="text"
