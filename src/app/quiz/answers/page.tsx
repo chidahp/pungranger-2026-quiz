@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Box, Button, IconButton, Modal, Stack, Typography } from "@mui/material";
+import { Box, Button, Modal, Stack, Typography } from "@mui/material";
 import MatrixBackground from "../../components/MatrixBackground";
 
 const STORAGE_KEY = "quiz-result";
@@ -187,7 +186,7 @@ export default function QuizAnswersPage() {
     <div className="relative min-h-screen overflow-x-hidden">
       <MatrixBackground />
 
-      <main className="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 py-8">
+      <main className="relative z-10 flex min-h-screen flex-col items-center justify-center">
         <div
           className={`relative w-full max-w-[380px] overflow-hidden rounded-3xl border border-[#00ff41]/40 bg-black/90 px-6 py-8 backdrop-blur sm:px-8 sm:py-10 ${
             isProcessing ? "" : "shadow-[0_20px_50px_rgba(0,255,65,0.12)]"
@@ -218,61 +217,78 @@ export default function QuizAnswersPage() {
           ) : (
             /* Result — reveal + ว้าว น่าแชร์ น่ากด */
             <div
-              className="text-center"
+              className="relative overflow-hidden rounded-2xl text-center"
               style={{
                 animation: "result-reveal 0.5s ease-out forwards",
               }}
             >
-              <div className="mx-auto mb-4 inline-flex items-center gap-2 rounded-full bg-[#00ff41]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#00ff41]">
-                <span aria-hidden>★</span> ผลของคุณ
-              </div>
-              <h2 className="mb-1 font-mono text-lg font-bold text-zinc-100">
-                เสร็จสิ้น!
-              </h2>
-              <div className="mb-6 flex justify-center">
-                <Image
-                  src={band.image}
-                  alt={band.title}
-                  width={320}
-                  height={200}
-                  className="h-auto w-full max-w-[320px] rounded-xl border border-zinc-800/60 bg-zinc-900/80"
-                />
-              </div>
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{
+                  backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.35) 45%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0.65) 100%), url(${band.image})`,
+                  backgroundSize: "cover",
+                  backgroundRepeat: "no-repeat",
+                }}
+                aria-hidden
+              />
 
-              <p className="mb-4 text-xs text-[#00ff41]/80">
-                ชอบผลแบบนี้? แชร์ให้เพื่อนลองทำดูดิ
-                <br />
-                {shareTip}
-              </p>
+              <div className="relative flex min-h-[640px] flex-col justify-between px-2 py-4 sm:px-4 sm:py-6">
+                {/* ม่านทึบหลังเนื้อหาเพื่อไม่ให้ทับกับตัวหนังสือในภาพ */}
+                {/* <div className="absolute inset-3 rounded-2xl border border-[#00ff41]/15 bg-black/40 shadow-[0_18px_38px_rgba(0,0,0,0.45)] backdrop-blur-sm" aria-hidden /> */}
 
-              {/* ปุ่ม 3 ปุ่ม — น่ากด */}
-              <div className="flex flex-col gap-3">
-                <Link
-                  href={BOOK_PREVIEW_URL}
-                  target={BOOK_PREVIEW_URL.startsWith("http") ? "_blank" : undefined}
-                  rel={BOOK_PREVIEW_URL.startsWith("http") ? "noopener noreferrer" : undefined}
-                  className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl border-2 border-[#00ff41] bg-[#00ff41]/15 px-6 py-3 font-mono text-sm font-bold text-[#00ff41] transition-all hover:scale-[1.03] hover:bg-[#00ff41]/25 hover:shadow-[0_0_28px_rgba(0,255,65,0.35)] active:scale-[0.98]"
+                {/* <div className="relative z-10 flex flex-col gap-3 px-4 py-3 sm:px-6 sm:py-4">
+                  <div className="mx-auto inline-flex items-center gap-2 rounded-full bg-[#00ff41]/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#00ff41] shadow-[0_6px_22px_rgba(0,0,0,0.45)]">
+                    <span aria-hidden>★</span> ผลของคุณ
+                  </div>
+                  <h2 className="font-mono text-lg font-bold text-zinc-100 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                    เสร็จสิ้น!
+                  </h2>
+                  <p className="text-xs text-[#00ff41]/85 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                    ชอบผลแบบนี้? แชร์ให้เพื่อนลองทำดูดิ
+                    <br />
+                    {shareTip}
+                  </p>
+                </div> */}
+
+                {/* ปุ่ม 3 ปุ่ม — วางในกรอบแดง */}
+                <div 
+                  className="relative top-70 z-10 mx-auto mt-6 w-full max-w-[340px] rounded-2xl border border-[#00ff41]/30 bg-black/75 p-4 shadow-[0_18px_38px_rgba(0,0,0,0.55)] backdrop-blur"
                   style={{
-                    boxShadow: "0 0 16px rgba(0, 255, 65, 0.2)",
+                    zoom: '85%',
+                    top: '24rem'
                   }}
                 >
-                  <span aria-hidden>📖</span>
-                  พรีหนังสือ
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setShowShare(true)}
-                  className="flex min-h-[52px] w-full items-center justify-center rounded-xl border-2 border-[#E1306C] bg-[#E1306C]/20 px-6 py-3 font-mono text-sm font-bold text-[#E1306C] transition-all hover:scale-[1.03] hover:shadow-[0_0_24px_rgba(225,48,108,0.35)] active:scale-[0.98]"
-                >
-                  ↗ แชร์ไปให้เพื่อน
-                </button>
-                <button
-                  type="button"
-                  onClick={handleRestart}
-                  className="flex min-h-[48px] w-full items-center justify-center rounded-xl border border-zinc-600 bg-zinc-800/70 px-6 py-3 font-mono text-sm font-medium text-zinc-200 transition-all hover:scale-[1.03] hover:bg-zinc-700/70 active:scale-[0.98]"
-                >
-                  เล่นอีกครั้ง
-                </button>
+                  <div className="flex flex-col gap-3">
+                    <Link
+                      href={BOOK_PREVIEW_URL}
+                      target={BOOK_PREVIEW_URL.startsWith("http") ? "_blank" : undefined}
+                      rel={
+                        BOOK_PREVIEW_URL.startsWith("http") ? "noopener noreferrer" : undefined
+                      }
+                      className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl border-2 border-[#00ff41] bg-[#00ff41]/15 px-6 py-3 font-mono text-sm font-bold text-[#00ff41] transition-all hover:scale-[1.03] hover:bg-[#00ff41]/25 hover:shadow-[0_0_28px_rgba(0,255,65,0.35)] active:scale-[0.98]"
+                      style={{
+                        boxShadow: "0 0 16px rgba(0, 255, 65, 0.2)",
+                      }}
+                    >
+                      <span aria-hidden>📖</span>
+                      พรีหนังสือ
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setShowShare(true)}
+                      className="flex min-h-[52px] w-full items-center justify-center rounded-xl border-2 border-[#E1306C] bg-[#E1306C]/20 px-6 py-3 font-mono text-sm font-bold text-[#E1306C] transition-all hover:scale-[1.03] hover:shadow-[0_0_24px_rgba(225,48,108,0.35)] active:scale-[0.98]"
+                    >
+                      ↗ แชร์ไปให้เพื่อน
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleRestart}
+                      className="flex min-h-[48px] w-full items-center justify-center rounded-xl border border-zinc-600 bg-zinc-800/70 px-6 py-3 font-mono text-sm font-medium text-zinc-200 transition-all hover:scale-[1.03] hover:bg-zinc-700/70 active:scale-[0.98]"
+                    >
+                      เล่นอีกครั้ง
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}
