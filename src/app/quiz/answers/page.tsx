@@ -124,7 +124,7 @@ export default function QuizAnswersPage() {
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
         await navigator.share({
           title: "สิ้นสุดทางเชื่อ Quiz",
-          text: "ลองทำแบบทดสอบนี้สิ ที่นี่เลย! https://pungranger2026.chidahp.com",
+          text: "ลองทำแบบทดสอบนี้สิ ที่นี่เลย! https://pungranger.chidahp.com",
           files: [file],
         });
       } else {
