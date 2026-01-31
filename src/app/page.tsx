@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import MatrixBackground from "./components/MatrixBackground";
 
+
 export default function Home() {
   return (
     <div className="relative min-h-screen overflow-x-hidden">

@@ -1,91 +1,67 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import MatrixBackground from "../components/MatrixBackground";
+import { QUIZ_DATA, getRandomQuestions, type Question } from "../../utils/quizData";
+
 
 const QUIZ_RESULT_STORAGE_KEY = "quiz-result";
-
-type Question = {
-  id: number;
-  question: string;
-  options: [string, string];
-  correctIndex: 0 | 1;
-};
-
-const QUIZ_DATA: Question[] = [
-  {
-    id: 1,
-    question: "ถ้าร้องเพลงในห้องครัว",
-    options: ["จะได้ผัวแก่ เมียแก่", "จะได้เป็นนักร้อง"],
-    correctIndex: 0,
-  },
-  {
-    id: 2,
-    question: "ถ้าเอานิ้วชี้ สายรุ้ง",
-    options: ["เอาเข้าปาก", "เอาไปจิ้มตูด"],
-    correctIndex: 1,
-  },
-  {
-    id: 3,
-    question: "สิ่งที่คุณเฝ้ารอมากที่สุดในวันที่ 1",
-    options: ["เงินเดือน", "หวยออก"],
-    correctIndex: 1,
-  },
-  {
-    id: 4,
-    question: "ชีวิตมันต้องเดินตามหา",
-    options: ["ความฝัน", "วันพีซ"],
-    correctIndex: 0,
-  },
-  {
-    id: 5,
-    question: "ถ้ามีคอลเซ็นเตอร์โทรมาบอกว่า มีพัสดุตกค้าง ให้โอนเงินเพื่อรับของ คุณจะ…",
-    options: ["แจ้งตำรวจมาจับ", "ขอสมัครงานเป็นคอลเซ็นเตอร์ด้วย"],
-    correctIndex: 1,
-  },
-  {
-    id: 6,
-    question: "นิทานเรื่องใด สอนว่าถ้าโกหกบ่อย ๆ คนจะไม่เชื่อ",
-    options: ["เด็กเลี้ยงแกะ", "เพื่อนเลี้ยงเบียร์"],
-    correctIndex: 0,
-  },
-  {
-    id: 7,
-    question: "ถ้าเพื่อนบอกว่า รอบนี้จะไม่กลับไปหาเขาแล้ว คุณจะเสิร์ชหา…",
-    options: ["วิธีมูให้เพื่อนได้แฟนใหม่ดี ๆ", "อาหารหมายี่ห้อไหนคนกินแล้วอร่อย"],
-    correctIndex: 0,
-  },
-  {
-    id: 8,
-    question: "ถ้ามีคนสวนหน้าสวยผิวพรรณดี แต่มีหนวด มาสมัครงานที่คฤหาสน์ประจำตระกูลของคุณ ความจริงแล้วเขาอาจเป็น..",
-    options: ["ทายาทที่แท้จริงของตระกูล", "คนสวนที่เคยเป็นพรีเซ็นเตอร์ครีมบำรุงผิว"],
-    correctIndex: 1,
-  },
-  {
-    id: 9,
-    question: "ถ้าคนในตี้เล่นเกมบอกว่า ตาสุดท้าย เราจะได้นอนในอีก…",
-    options: ["5 นาที", "5 ชั่วโมง"],
-    correctIndex: 0,
-  },
-  {
-    id: 10,
-    question: "คุณคิดว่าชีวิตจะดีขึ้นได้ เพราะ…",
-    options: ["วางแผนชีวิต", "ดูดวงก่อน แล้วค่อยวางแผน"],
-    correctIndex: 0,
-  },
-];
+const QUIZ_SESSION_KEY = "quiz-questions-cache";
+const QUIZ_TTL_MS = 5 * 60 * 1000; // 5 นาที
 
 const CHOICE_LABELS = ["A", "B"] as const;
 
 export default function QuizPage() {
   const router = useRouter();
+  const [questions, setQuestions] = useState<Question[] | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<0 | 1 | null>(null);
   const [answers, setAnswers] = useState<(0 | 1)[]>([]);
 
-  const currentQuestion = QUIZ_DATA[currentIndex];
-  const totalQuestions = QUIZ_DATA.length;
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const cached = sessionStorage.getItem(QUIZ_SESSION_KEY);
+    const now = Date.now();
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached) as {
+          timestamp: number;
+          questions: Question[];
+        };
+        if (
+          Array.isArray(parsed.questions) &&
+          typeof parsed.timestamp === "number" &&
+          now - parsed.timestamp < QUIZ_TTL_MS
+        ) {
+          queueMicrotask(() => setQuestions(parsed.questions));
+          return;
+        }
+      } catch {
+        // ignore parse errors
+      }
+    }
+    const fresh = getRandomQuestions(QUIZ_DATA, 10);
+    queueMicrotask(() => setQuestions(fresh));
+    sessionStorage.setItem(
+      QUIZ_SESSION_KEY,
+      JSON.stringify({ timestamp: now, questions: fresh })
+    );
+  }, []);
+
+  if (!questions) {
+    return (
+      <div className="relative flex min-h-screen items-center justify-center">
+        <MatrixBackground />
+        <div className="relative z-10 font-mono text-[#00ff41] opacity-80">
+          กำลังโหลดคำถาม...
+        </div>
+      </div>
+    );
+  }
+
+  const currentQuestion = questions[currentIndex];
+  const totalQuestions = Math.min(10, questions.length);
   const progress = ((currentIndex + 1) / totalQuestions) * 100;
 
   const handleSelect = (optionIndex: 0 | 1) => {
@@ -100,7 +76,7 @@ export default function QuizPage() {
     if (currentIndex === totalQuestions - 1) {
       const finalAnswers = [...newAnswers];
       const score = finalAnswers.filter(
-        (ans, i) => ans === QUIZ_DATA[i].correctIndex
+        (ans, i) => ans === questions[i].correctIndex
       ).length;
       sessionStorage.setItem(
         QUIZ_RESULT_STORAGE_KEY,

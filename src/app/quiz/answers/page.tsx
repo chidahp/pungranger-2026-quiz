@@ -1,15 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Box, Button, IconButton, Modal, Stack, Typography } from "@mui/material";
 import MatrixBackground from "../../components/MatrixBackground";
-import ShareResultCard from "../../components/ShareResultCard";
 
 const STORAGE_KEY = "quiz-result";
 const PROCESSING_DURATION_MS = 2800;
 // ลิงก์พรีวิวหนังสือ "สิ้นสุดทางเชื่อ" / "สิ้นสุดความเชื่อ" — แก้เป็น URL จริงเมื่อมี
-const BOOK_PREVIEW_URL = "#";
+const BOOK_PREVIEW_URL = "https://link.chidahp.com/pungranger2026";
 
 type StoredResult = {
   answers: (0 | 1)[];
@@ -24,6 +25,7 @@ type ResultBand = {
   description: string;
   color: string;
   emoji: string;
+  image: string;
 };
 
 // คะแนนน้อย (0-3) = ผู้หลุดพ้น | กลาง (4-6) = เริ่มหลุดพ้น | มาก (7-10) = ยังเชื่อมาก
@@ -36,6 +38,7 @@ const RESULT_BANDS: ResultBand[] = [
     description:
       "ยินดีที่คุณเลือกจะเชื่อในตัวเองมากกว่าสิ่งที่สังคมบอกว่าถูกต้อง หนังสือที่เหมาะกับคุณที่สุดในตอนนี้คือ \"สิ้นสุดทางเชื่อ\" เรื่องราวจากเหล่าผู้พังกรอบคิดเดิม ๆ จากสังคม เพื่อออกไปใช้ชีวิต!",
     color: "#00ff41",
+    image: "/1.png",
   },
   {
     min: 4,
@@ -45,6 +48,7 @@ const RESULT_BANDS: ResultBand[] = [
     description:
       "ถ้าอยากก้าวข้ามกรอบนี้ไปได้เต็มตัว เราขอแนะนำ \"สิ้นสุดทางเชื่อ\" หนังสือที่จะทำให้คุณทิ้งความเชื่อเดิม ๆ ได้อย่างหมดจด!",
     color: "#eab308",
+    image: "/2.png",
   },
   {
     min: 7,
@@ -54,6 +58,7 @@ const RESULT_BANDS: ResultBand[] = [
     description:
       "ซึ่งไม่ใช่เรื่องเลวร้ายอะไร แต่ถ้าอยากเลิกยึดติดกับความเชื่อเดิม ๆ ลองอ่าน \"สิ้นสุดความเชื่อ\" ดูสิ พรีเล้ย!",
     color: "#ef4444",
+    image: "/3.png",
   },
 ];
 
@@ -68,11 +73,18 @@ export default function QuizAnswersPage() {
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(true);
   const [result, setResult] = useState<StoredResult | null>(null);
+  const [showShare, setShowShare] = useState(false);
+  const [copyState, setCopyState] = useState<"idle" | "done">("idle");
+  const [shareState, setShareState] = useState<"idle" | "loading" | "error">(
+    "idle"
+  );
+  const shareTip =
+    "แชร์ผลลง IG Story แล้ว Tag @Chidahp ด้วยนะ";
 
   useEffect(() => {
     const raw = typeof window !== "undefined" ? sessionStorage.getItem(STORAGE_KEY) : null;
     if (!raw) {
-      router.replace("/quiz");
+      router.replace("/");
       return;
     }
     try {
@@ -82,12 +94,12 @@ export default function QuizAnswersPage() {
         typeof data.score !== "number" ||
         typeof data.totalQuestions !== "number"
       ) {
-        router.replace("/quiz");
+        router.replace("/");
         return;
       }
       queueMicrotask(() => setResult(data));
     } catch {
-      router.replace("/quiz");
+      router.replace("/");
       return;
     }
   }, [router]);
@@ -100,7 +112,62 @@ export default function QuizAnswersPage() {
 
   const handleRestart = () => {
     sessionStorage.removeItem(STORAGE_KEY);
-    router.push("/quiz");
+    router.push("/");
+  };
+
+  const handleShareImage = async (imageUrl: string) => {
+    if (typeof window === "undefined") return;
+    setShareState("loading");
+    try {
+      const res = await fetch(imageUrl);
+      const blob = await res.blob();
+      const file = new File([blob], "quiz-result.png", { type: blob.type });
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          title: "สิ้นสุดทางเชื่อ Quiz",
+          text: "ลองทำแบบทดสอบนี้สิ",
+          files: [file],
+        });
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "quiz-result.png";
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+      setShareState("idle");
+    } catch {
+      setShareState("error");
+      setTimeout(() => setShareState("idle"), 1500);
+    }
+  };
+
+  const handleDownloadImage = async (imageUrl: string) => {
+    if (typeof window === "undefined") return;
+    try {
+      const res = await fetch(imageUrl);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "quiz-result.png";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopyState("done");
+      setTimeout(() => setCopyState("idle"), 1500);
+    } catch {
+      setCopyState("done");
+      setTimeout(() => setCopyState("idle"), 1500);
+    }
   };
 
   if (result === null) {
@@ -114,8 +181,7 @@ export default function QuizAnswersPage() {
     );
   }
 
-  const { score, totalQuestions } = result;
-  const band = getResultBand(score);
+  const band = getResultBand(result.score);
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">
@@ -160,33 +226,23 @@ export default function QuizAnswersPage() {
               <div className="mx-auto mb-4 inline-flex items-center gap-2 rounded-full bg-[#00ff41]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#00ff41]">
                 <span aria-hidden>★</span> ผลของคุณ
               </div>
-              <div
-                className="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-full border-2 border-[#00ff41]/80 bg-[#00ff41]/15 font-mono text-3xl font-bold text-[#00ff41]"
-                style={{
-                  animation: "score-pulse 2s ease-in-out infinite",
-                  boxShadow: "0 0 24px rgba(0, 255, 65, 0.2)",
-                }}
-              >
-                {score}/{totalQuestions}
-              </div>
               <h2 className="mb-1 font-mono text-lg font-bold text-zinc-100">
                 เสร็จสิ้น!
               </h2>
-              <p
-                className="mb-2 text-base font-semibold sm:text-lg"
-                style={{
-                  color: band.color,
-                  textShadow: `0 0 20px ${band.color}40`,
-                }}
-              >
-                {band.emoji} {band.title}
-              </p>
-              <p className="mb-6 text-sm leading-relaxed text-zinc-400">
-                {band.description}
-              </p>
+              <div className="mb-6 flex justify-center">
+                <Image
+                  src={band.image}
+                  alt={band.title}
+                  width={320}
+                  height={200}
+                  className="h-auto w-full max-w-[320px] rounded-xl border border-zinc-800/60 bg-zinc-900/80"
+                />
+              </div>
 
               <p className="mb-4 text-xs text-[#00ff41]/80">
                 ชอบผลแบบนี้? แชร์ให้เพื่อนลองทำดูดิ
+                <br />
+                {shareTip}
               </p>
 
               {/* ปุ่ม 3 ปุ่ม — น่ากด */}
@@ -203,12 +259,13 @@ export default function QuizAnswersPage() {
                   <span aria-hidden>📖</span>
                   พรีหนังสือ
                 </Link>
-                <ShareResultCard
-                  score={score}
-                  totalQuestions={totalQuestions}
-                  band={{ title: band.title, description: band.description }}
-                  className="min-h-[52px] transition-transform hover:scale-[1.03] active:scale-[0.98]"
-                />
+                <button
+                  type="button"
+                  onClick={() => setShowShare(true)}
+                  className="flex min-h-[52px] w-full items-center justify-center rounded-xl border-2 border-[#E1306C] bg-[#E1306C]/20 px-6 py-3 font-mono text-sm font-bold text-[#E1306C] transition-all hover:scale-[1.03] hover:shadow-[0_0_24px_rgba(225,48,108,0.35)] active:scale-[0.98]"
+                >
+                  ↗ แชร์ไปให้เพื่อน
+                </button>
                 <button
                   type="button"
                   onClick={handleRestart}
@@ -221,6 +278,132 @@ export default function QuizAnswersPage() {
           )}
         </div>
       </main>
+
+      <Modal open={showShare} onClose={() => setShowShare(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "min(90vw, 380px)",
+            bgcolor: "#0f0f0f",
+            border: "1px solid #2f2f2f",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.6)",
+            borderRadius: 3,
+            p: 3,
+          }}
+        >
+          <Stack direction="row" alignItems="start" justifyContent="space-between" gap={1}>
+            <Typography
+              fontFamily="var(--font-geist-mono)"
+              fontSize={14}
+              fontWeight={700}
+              color="#00ff41"
+            >
+              แชร์ผลของคุณ
+            </Typography>
+          </Stack>
+
+          <Box
+            mt={2}
+            border="1px solid #2f2f2f"
+            borderRadius={2}
+            overflow="hidden"
+            bgcolor="#111"
+          >
+            <Box p={2}>
+              <Typography fontSize={14} fontWeight={700} color="#e4e4e7">
+                {band.title}
+              </Typography>
+              <Typography mt={0.5} fontSize={12} color="#a1a1aa">
+                {band.description}
+              </Typography>
+              <Typography mt={1} fontSize={11} color="rgba(0,255,65,0.8)">
+                ลิงก์ผลลัพธ์: {typeof window !== "undefined" ? window.location.href : ""}
+              </Typography>
+            </Box>
+          </Box>
+
+          <Stack mt={3} spacing={1.2}>
+            <Button
+              onClick={() => handleShareImage(band.image)}
+              variant="outlined"
+              sx={{
+                borderColor: "#E1306C",
+                color: "#E1306C",
+                bgcolor: "rgba(225,48,108,0.15)",
+                textTransform: "none",
+                fontFamily: "var(--font-geist-mono)",
+                fontWeight: 700,
+                minHeight: 48,
+                "&:hover": {
+                  borderColor: "#E1306C",
+                  bgcolor: "rgba(225,48,108,0.25)",
+                  transform: "scale(1.02)",
+                },
+              }}
+            >
+              {shareState === "loading"
+                ? "กำลังแชร์..."
+                : shareState === "error"
+                  ? "ลองใหม่อีกครั้ง"
+                  : "แชร์ภาพนี้"}
+            </Button>
+            <Button
+              onClick={() => handleDownloadImage(band.image)}
+              variant="outlined"
+              sx={{
+                borderColor: "rgba(0,255,65,0.6)",
+                color: "#00ff41",
+                bgcolor: "rgba(0,255,65,0.1)",
+                textTransform: "none",
+                fontFamily: "var(--font-geist-mono)",
+                fontWeight: 600,
+                minHeight: 48,
+                "&:hover": {
+                  borderColor: "#00ff41",
+                  bgcolor: "rgba(0,255,65,0.2)",
+                  transform: "scale(1.02)",
+                },
+              }}
+            >
+              ดาวน์โหลดภาพ
+            </Button>
+            <Button
+              onClick={handleCopyLink}
+              variant="outlined"
+              sx={{
+                borderColor: "#3f3f46",
+                color: "#e4e4e7",
+                bgcolor: "rgba(63,63,70,0.4)",
+                textTransform: "none",
+                fontFamily: "var(--font-geist-mono)",
+                fontWeight: 600,
+                minHeight: 48,
+                "&:hover": {
+                  bgcolor: "rgba(63,63,70,0.6)",
+                  transform: "scale(1.02)",
+                },
+              }}
+            >
+              {copyState === "done" ? "คัดลอกแล้ว" : "คัดลอกลิงก์"}
+            </Button>
+            <Button
+              onClick={() => setShowShare(false)}
+              variant="text"
+              sx={{
+                color: "#a1a1aa",
+                textTransform: "none",
+                fontSize: 12,
+                "&:hover": { bgcolor: "rgba(255,255,255,0.05)" },
+              }}
+            >
+              ปิด
+            </Button>
+          </Stack>
+        </Box>
+      </Modal>
     </div>
   );
 }
