@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Box, Button, Modal, Stack, Typography, Tooltip } from "@mui/material";
 import MatrixBackground from "../../components/MatrixBackground";
-import { useResponsive } from "@/app/hook/useResponsive";
 
 const STORAGE_KEY = "quiz-result";
 const PROCESSING_DURATION_MS = 2800;
@@ -71,7 +70,6 @@ function getResultBand(score: number): ResultBand {
 
 export default function QuizAnswersPage() {
   const router = useRouter();
-  const { isMobile } = useResponsive();
   const [isProcessing, setIsProcessing] = useState(true);
   const [result, setResult] = useState<StoredResult | null>(null);
   const [showShare, setShowShare] = useState(false);
@@ -194,6 +192,7 @@ export default function QuizAnswersPage() {
           style={{
             backgroundImage:
               "radial-gradient(circle at 20% 20%, rgba(0,255,65,0.12), transparent 35%), radial-gradient(circle at 80% 0%, rgba(255,255,255,0.06), transparent 45%)",
+            padding: 0,
           }}
         >
           {isProcessing ? (
@@ -232,61 +231,39 @@ export default function QuizAnswersPage() {
                 aria-hidden
               />
 
-              <div className="relative flex min-h-[640px] flex-col justify-between px-2 py-4 sm:px-4 sm:py-6">
-                {/* ม่านทึบหลังเนื้อหาเพื่อไม่ให้ทับกับตัวหนังสือในภาพ */}
-                {/* <div className="absolute inset-3 rounded-2xl border border-[#00ff41]/15 bg-black/40 shadow-[0_18px_38px_rgba(0,0,0,0.45)] backdrop-blur-sm" aria-hidden /> */}
-
-                {/* <div className="relative z-10 flex flex-col gap-3 px-4 py-3 sm:px-6 sm:py-4">
-                  <div className="mx-auto inline-flex items-center gap-2 rounded-full bg-[#00ff41]/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#00ff41] shadow-[0_6px_22px_rgba(0,0,0,0.45)]">
-                    <span aria-hidden>★</span> ผลของคุณ
-                  </div>
-                  <h2 className="font-mono text-lg font-bold text-zinc-100 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
-                    เสร็จสิ้น!
-                  </h2>
-                  <p className="text-xs text-[#00ff41]/85 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
-                    ชอบผลแบบนี้? แชร์ให้เพื่อนลองทำดูดิ
-                    <br />
-                    {shareTip}
-                  </p>
-                </div> */}
-
-                {/* ปุ่ม 3 ปุ่ม — วางในกรอบแดง */}
-                <div 
-                  className="relative top-70 z-10 mx-auto mt-6 w-full max-w-[340px] rounded-2xl border border-[#00ff41]/30 bg-black/75 p-4 shadow-[0_18px_38px_rgba(0,0,0,0.55)] backdrop-blur"
-                  style={{
-                    zoom: isMobile ? '70%' : '85%',
-                    top: isMobile ? '455px' : '24rem'
-                  }}
-                >
-                  <div className="flex flex-col gap-3">
-                    <Link
-                      href={BOOK_PREVIEW_URL}
-                      target={BOOK_PREVIEW_URL.startsWith("http") ? "_blank" : undefined}
-                      rel={
-                        BOOK_PREVIEW_URL.startsWith("http") ? "noopener noreferrer" : undefined
-                      }
-                      className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl border-2 border-[#00ff41] bg-[#00ff41]/15 px-6 py-3 font-mono text-sm font-bold text-[#00ff41] transition-all hover:scale-[1.03] hover:bg-[#00ff41]/25 hover:shadow-[0_0_28px_rgba(0,255,65,0.35)] active:scale-[0.98]"
-                      style={{
-                        boxShadow: "0 0 16px rgba(0, 255, 65, 0.2)",
-                      }}
-                    >
-                      <span aria-hidden>📖</span>
-                      พรีหนังสือ (กดเล้ยยยย!!!!)
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={() => setShowShare(true)}
-                      className="flex min-h-[52px] w-full items-center justify-center rounded-xl border-2 border-[#E1306C] bg-[#E1306C]/20 px-6 py-3 font-mono text-sm font-bold text-[#E1306C] transition-all hover:scale-[1.03] hover:shadow-[0_0_24px_rgba(225,48,108,0.35)] active:scale-[0.98]"
-                    >
-                      ↗ แชร์ไปให้เพื่อน
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleRestart}
-                      className="flex min-h-[48px] w-full items-center justify-center rounded-xl border border-zinc-600 bg-zinc-800/70 px-6 py-3 font-mono text-sm font-medium text-zinc-200 transition-all hover:scale-[1.03] hover:bg-zinc-700/70 active:scale-[0.98]"
-                    >
-                      เล่นอีกครั้ง
-                    </button>
+              <div className="relative flex min-h-[720px] flex-col items-center justify-end px-3 py-6 sm:min-h-[760px] sm:px-5 sm:py-8 mb-20">
+                <div className="w-full max-w-[360px] sm:max-w-[390px]">
+                  <div className="rounded-2xl border border-[#00ff41]/35 bg-black/75 p-4 shadow-[0_18px_38px_rgba(0,0,0,0.55)] backdrop-blur-md sm:p-5">
+                    <div className="flex flex-col gap-3 sm:gap-3.5">
+                      <Link
+                        href={BOOK_PREVIEW_URL}
+                        target={BOOK_PREVIEW_URL.startsWith("http") ? "_blank" : undefined}
+                        rel={
+                          BOOK_PREVIEW_URL.startsWith("http") ? "noopener noreferrer" : undefined
+                        }
+                        className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl border-2 border-[#00ff41] bg-[#00ff41]/15 px-6 py-3 font-mono text-sm font-bold text-[#00ff41] transition-all hover:scale-[1.03] hover:bg-[#00ff41]/25 hover:shadow-[0_0_28px_rgba(0,255,65,0.35)] active:scale-[0.98]"
+                        style={{
+                          boxShadow: "0 0 16px rgba(0, 255, 65, 0.2)",
+                        }}
+                      >
+                        <span aria-hidden>📖</span>
+                        พรีหนังสือ (กดเล้ยยยย!!!!)
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => setShowShare(true)}
+                        className="flex min-h-[52px] w-full items-center justify-center rounded-xl border-2 border-[#E1306C] bg-[#E1306C]/20 px-6 py-3 font-mono text-sm font-bold text-[#E1306C] transition-all hover:scale-[1.03] hover:shadow-[0_0_24px_rgba(225,48,108,0.35)] active:scale-[0.98]"
+                      >
+                        ↗ แชร์ไปให้เพื่อน
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleRestart}
+                        className="flex min-h-[48px] w-full items-center justify-center rounded-xl border border-zinc-600 bg-zinc-800/70 px-6 py-3 font-mono text-sm font-medium text-zinc-200 transition-all hover:scale-[1.03] hover:bg-zinc-700/70 active:scale-[0.98]"
+                      >
+                        เล่นอีกครั้ง
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -326,12 +303,12 @@ export default function QuizAnswersPage() {
               color="#a1a1aa"
               fontFamily="var(--font-geist-mono)"
             >
-              แชร์ IG Story แล้วแท็ก @Chidahp @pangranger.co
+              แชร์ IG Story แล้วแท็ก @Chidahp @pungranger.co
             </Typography>
           </Stack>
 
           <Stack mt={3} spacing={1.2}>
-            <Tooltip title="แชร์ IG Story แล้วอย่าลืมแท็ก @Chidahp @pangranger.co" placement="top">
+            <Tooltip title="แชร์ IG Story แล้วอย่าลืมแท็ก @Chidahp @pungranger.co" placement="top">
               <span>
                 <Button
                   className="w-full"
