@@ -73,7 +73,6 @@ export default function QuizAnswersPage() {
   const [isProcessing, setIsProcessing] = useState(true);
   const [result, setResult] = useState<StoredResult | null>(null);
   const [showShare, setShowShare] = useState(false);
-  const [copyState, setCopyState] = useState<"idle" | "done">("idle");
   const [shareState, setShareState] = useState<"idle" | "loading" | "error">(
     "idle"
   );
