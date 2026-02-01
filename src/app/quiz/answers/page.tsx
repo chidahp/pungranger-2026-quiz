@@ -155,16 +155,6 @@ export default function QuizAnswersPage() {
     }
   };
 
-  // const handleCopyLink = async () => {
-  //   try {
-  //     await navigator.clipboard.writeText(window.location.href);
-  //     setCopyState("done");
-  //     setTimeout(() => setCopyState("idle"), 1500);
-  //   } catch {
-  //     setCopyState("done");
-  //     setTimeout(() => setCopyState("idle"), 1500);
-  //   }
-  // };
 
   if (result === null) {
     return (
