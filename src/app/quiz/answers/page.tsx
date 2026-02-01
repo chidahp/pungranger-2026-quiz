@@ -276,28 +276,83 @@ export default function QuizAnswersPage() {
             p: 3,
           }}
         >
-          <Stack direction="column" spacing={0.5} mb={1}>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
-              <Typography
-                fontFamily="var(--font-geist-mono)"
-                fontSize={14}
-                fontWeight={700}
-                color="#00ff41"
-              >
-                แชร์ผลของคุณ
-              </Typography>
-            </Stack>
+          <Stack direction="column" spacing={2} mb={3}>
             <Typography
-              fontSize={12}
-              color="#a1a1aa"
               fontFamily="var(--font-geist-mono)"
+              fontSize={22}
+              fontWeight={800}
+              sx={{
+                background: "linear-gradient(135deg, #00ff41 0%, #00cc33 50%, #7cff7c 100%)",
+                backgroundClip: "text",
+                WebkitBackgroundClip: "text",
+                color: "transparent",
+                textShadow: "0 0 24px rgba(0,255,65,0.4)",
+                letterSpacing: "0.02em",
+              }}
             >
-              แชร์ IG Story แล้วแท็ก @Chidahp @pungranger.co
+              แชร์ผลของคุณ
             </Typography>
+            <Box
+              sx={{
+                position: "relative",
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "center",
+                gap: 1,
+                py: 2,
+                px: 2,
+                borderRadius: 2,
+                bgcolor: "rgba(225,48,108,0.15)",
+                border: "2px solid rgba(225,48,108,0.55)",
+                boxShadow: "0 0 28px rgba(225,48,108,0.25), inset 0 0 24px rgba(225,48,108,0.08)",
+              }}
+            >
+              <Typography
+                fontSize={15}
+                color="#f4f4f5"
+                fontFamily="var(--font-geist-mono)"
+                fontWeight={700}
+                sx={{ width: "100%", mb: 0.5 }}
+              >
+                ⚠️⚠️ แชร์ IG Story อย่าลืม Follow ก่อนที่จะแท็ก ให้พวกเราดูด้วยน้าาาา ✨✨
+              </Typography>
+              <Typography
+                component="span"
+                fontSize={13}
+                fontFamily="var(--font-geist-mono)"
+                fontWeight={700}
+                sx={{
+                  color: "white",
+                  px: 1.25,
+                  py: 0.5,
+                  borderRadius: 1.5,
+                  bgcolor: "rgba(225,48,108,0.3)",
+                  border: "1px solid rgba(225,48,108,0.5)",
+                }}
+              >
+                IG: @chidahp
+              </Typography>
+              <Typography
+                component="span"
+                fontSize={13}
+                fontFamily="var(--font-geist-mono)"
+                fontWeight={700}
+                sx={{
+                  color: "#00ff41",
+                  px: 1.25,
+                  py: 0.5,
+                  borderRadius: 1.5,
+                  bgcolor: "rgba(0,255,65,0.2)",
+                  border: "1px solid rgba(0,255,65,0.4)",
+                }}
+              >
+                IG: @pungranger.co
+              </Typography>
+            </Box>
           </Stack>
 
           <Stack mt={3} spacing={1.2}>
-            <Tooltip title="แชร์ IG Story แล้วอย่าลืมแท็ก @Chidahp @pungranger.co" placement="top">
+            <Tooltip title="แชร์ IG Story แล้วอย่าลืมแท็ก @chidahp @pungranger.co" placement="top">
               <span>
                 <Button
                   className="w-full"
