@@ -80,7 +80,7 @@ export default function QuizAnswersPage() {
   useEffect(() => {
     const raw = typeof window !== "undefined" ? sessionStorage.getItem(STORAGE_KEY) : null;
     if (!raw) {
-      router.replace("/");
+      router.replace("/quiz");
       return;
     }
     try {
@@ -90,12 +90,12 @@ export default function QuizAnswersPage() {
         typeof data.score !== "number" ||
         typeof data.totalQuestions !== "number"
       ) {
-        router.replace("/");
+        router.replace("/quiz");
         return;
       }
       queueMicrotask(() => setResult(data));
     } catch {
-      router.replace("/");
+      router.replace("/quiz");
       return;
     }
   }, [router]);
@@ -108,7 +108,7 @@ export default function QuizAnswersPage() {
 
   const handleRestart = () => {
     sessionStorage.removeItem(STORAGE_KEY);
-    router.push("/");
+    router.push("/quiz");
   };
 
   const handleShareImage = async (imageUrl: string) => {

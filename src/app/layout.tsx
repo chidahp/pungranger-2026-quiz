@@ -13,34 +13,34 @@ const geistMono = Geist_Mono({
 });
 
 const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://pangranger.chidahp.com";
-const ogImage = "/pangranger-logo-belief.png";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://pungranger.chidahp.com";
+const ogImage = "/pung-ranger-logo.png";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "สิ้นสุดทางเชื่อ | Matrix Quiz",
+  title: "พังเรนเจอร์ | สำนักพิมพ์ของเหล่าคนพัง ที่ลุกขึ้นมาทำสิ่งที่โคตรจริงจัง",
   description:
-    "ชวนคุณสำรวจว่าคุณใช้ชีวิตด้วยความเชื่อแค่ไหน พร้อมผลลัพธ์แบ่งกลุ่มแบบแชร์ได้ทันที",
+    "พังเรนเจอร์ | สำนักพิมพ์ของเหล่าคนพัง ที่ลุกขึ้นมาทำสิ่งที่โคตรจริงจัง",
   openGraph: {
-    title: "สิ้นสุดทางเชื่อ | Matrix Quiz",
+    title: "พังเรนเจอร์ | สำนักพิมพ์ของเหล่าคนพัง ที่ลุกขึ้นมาทำสิ่งที่โคตรจริงจัง",
     description:
-      "ทำแบบทดสอบเพื่อดูว่าคุณใช้ชีวิตด้วยความเชื่อมากแค่ไหน แชร์ผลให้เพื่อนลองทำต่อได้ทันที",
+      "พังเรนเจอร์ | สำนักพิมพ์ของเหล่าคนพัง ที่ลุกขึ้นมาทำสิ่งที่โคตรจริงจัง",
     url: siteUrl,
-    siteName: "สิ้นสุดทางเชื่อ Quiz",
+    siteName: "พังเรนเจอร์",
     images: [
       {
         url: ogImage,
         width: 1200,
         height: 630,
-        alt: "สิ้นสุดทางเชื่อ Quiz",
+        alt: "พังเรนเจอร์ | สำนักพิมพ์ของเหล่าคนพัง ที่ลุกขึ้นมาทำสิ่งที่โคตรจริงจัง",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "สิ้นสุดทางเชื่อ | Matrix Quiz",
+    title: "พังเรนเจอร์ | สำนักพิมพ์ของเหล่าคนพัง ที่ลุกขึ้นมาทำสิ่งที่โคตรจริงจัง",
     description:
-      "ทำแบบทดสอบว่าคุณใช้ชีวิตด้วยความเชื่อแค่ไหน แล้วแชร์ผลให้เพื่อนได้ทันที",
+      "พังเรนเจอร์ | สำนักพิมพ์ของเหล่าคนพัง ที่ลุกขึ้นมาทำสิ่งที่โคตรจริงจัง",
     images: [ogImage],
   },
 };
