@@ -1,7 +1,8 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
-import Image from "next/image";
+import { useRouter } from "next/navigation";
+import QRCode from "react-qr-code";
 
 type BookKey = "belief" | "china";
 
@@ -26,8 +27,10 @@ const BOOK_OPTIONS: { key: BookKey; label: string }[] = [
 const REGISTER_URL = "https://playground.chidahp.com/api/pungranger/register";
 const FALLBACK_BASE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://pungranger.chidahp.com";
+const GIFT_PATH_PREFIX = "/gift";
 
 export default function AdminQrPage() {
+  const router = useRouter();
   const [customerName, setCustomerName] = useState("");
   const [booksPurchased, setBooksPurchased] = useState<BookKey[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,7 +66,7 @@ export default function AdminQrPage() {
     const browserBaseUrl =
       typeof window !== "undefined" ? window.location.origin : FALLBACK_BASE_URL;
     const normalizedBaseUrl = browserBaseUrl.replace(/\/$/, "");
-    return `${normalizedBaseUrl}/${slugFromResponse}`;
+    return `${normalizedBaseUrl}${GIFT_PATH_PREFIX}/${slugFromResponse}`;
   }, [slugFromResponse]);
 
   const qrContent = useMemo(() => {
@@ -75,11 +78,6 @@ export default function AdminQrPage() {
     }
     return JSON.stringify(payload);
   }, [apiResult, payload, qrTargetUrl]);
-
-  const qrUrl = useMemo(() => {
-    const encoded = encodeURIComponent(qrContent);
-    return `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encoded}`;
-  }, [qrContent]);
 
   const toggleBook = (key: BookKey) => {
     setBooksPurchased((prev) =>
@@ -136,6 +134,16 @@ export default function AdminQrPage() {
       }
 
       setApiResult(resultForLog);
+
+      if (response.ok && typeof parsedBody === "object" && parsedBody) {
+        const body = parsedBody as RegisterSuccessBody;
+        if (body.slug) {
+          const target = `${window.location.origin}${GIFT_PATH_PREFIX}/${body.slug}`;
+          router.push(
+            `/admin/qr/print?slug=${encodeURIComponent(body.slug)}&target=${encodeURIComponent(target)}`
+          );
+        }
+      }
     } catch (error) {
       console.error("Pungranger register API failed:", error);
       setApiError("เกิดข้อผิดพลาดระหว่างเรียก API");
@@ -219,7 +227,9 @@ export default function AdminQrPage() {
 
           <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4">
             <h2 className="mb-3 text-sm font-semibold text-zinc-300">QR Code</h2>
-            <Image src={qrUrl} alt="Generated QR Code" width={320} height={320} />
+            <div className="inline-block rounded-md bg-white p-3">
+              <QRCode value={qrContent} size={320} />
+            </div>
             {qrTargetUrl ? (
               <p className="mt-3 break-all text-xs text-emerald-400">{qrTargetUrl}</p>
             ) : null}
