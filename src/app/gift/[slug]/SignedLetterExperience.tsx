@@ -111,35 +111,36 @@ export default function SignedLetterExperience({ gift }: SignedLetterExperienceP
     if (typeof window === "undefined" || isSharing) return;
     setIsSharing(true);
 
-    const pageUrl = window.location.href;
-    const shareText = `ข้อความจาก ${activeWriter.name} ถึงคุณ ${gift.customer_name}`;
-
     try {
-      if (navigator.share) {
-        await navigator.share({
-          title: "Pungranger Signed Letter",
-          text: shareText,
-          url: pageUrl,
-        });
+      const res = await fetch(signedImageUrl);
+      const blob = await res.blob();
+      const ext = blob.type === "image/jpeg" ? "jpg" : "png";
+      const file = new File(
+        [blob],
+        `pungranger-signed-${activeBook}-${activeWriter.key}.${ext}`,
+        { type: blob.type || "image/png" },
+      );
+
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file] });
         setShareLabel("แชร์แล้ว ✓");
         resetShareLabel();
         return;
       }
 
-      await navigator.clipboard.writeText(pageUrl);
-      setShareLabel("คัดลอกลิงก์แล้ว ✓");
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = file.name;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      setShareLabel("บันทึกรูปแล้ว ✓");
       resetShareLabel();
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") {
         resetShareLabel();
         return;
       }
-      try {
-        await navigator.clipboard.writeText(pageUrl);
-        setShareLabel("คัดลอกลิงก์แล้ว ✓");
-      } catch {
-        setShareLabel("ลองใหม่อีกครั้ง");
-      }
+      setShareLabel("ลองใหม่อีกครั้ง");
       resetShareLabel();
     } finally {
       setIsSharing(false);
