@@ -140,7 +140,7 @@ export default function AdminQrPage() {
         if (body.slug) {
           const target = `${window.location.origin}${GIFT_PATH_PREFIX}/${body.slug}`;
           router.push(
-            `/admin/qr/print?slug=${encodeURIComponent(body.slug)}&target=${encodeURIComponent(target)}`
+            `/admin/qr/print?slug=${encodeURIComponent(body.slug)}&target=${encodeURIComponent(target)}&customer_name=${encodeURIComponent(customerName)}`
           );
         }
       }

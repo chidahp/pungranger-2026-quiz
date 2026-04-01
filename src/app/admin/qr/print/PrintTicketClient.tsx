@@ -6,11 +6,13 @@ import QRCode from "react-qr-code";
 type PrintTicketClientProps = {
   slug: string;
   target: string;
+  customerName: string;
 };
 
 export default function PrintTicketClient({
   slug,
   target,
+  customerName,
 }: PrintTicketClientProps) {
   return (
     <main className="bg-gray-300 flex justify-center py-10">
@@ -31,17 +33,20 @@ export default function PrintTicketClient({
           <Image
             src="/pung-ranger-logo.png"
             alt="Pung Ranger"
-            width={110}
-            height={110}
-            className="h-auto w-[42vw] max-w-[360px] min-w-[240px] print:w-[34mm]"
+            width={80}
+            height={80}
+            className="h-auto w-[32vw] max-w-[360px] min-w-[240px] print:w-[34mm]"
             priority
           />
-
-          <div className="mt-8 border border-zinc-300 bg-white p-4 print:mt-[2mm] print:border-black print:p-[2mm]">
+          <p className="mt-8 text-center font-bold text-black">
+            ⚠️ ของขวัญสำหรับชาวพัง ⚠️ <br />
+            <span className="text-black font-bold text-xl">{customerName}</span>
+          </p>
+          <div className="mt-2 border border-zinc-300 bg-white p-4 print:mt-[2mm] print:border-black print:p-[2mm]">
             <QRCode value={target} size={220} level="H" />
           </div>
 
-          <p className="mt-8 max-w-6xl break-all px-2 text-center font-mono text-md leading-tight print:mt-[2.5mm] print:text-[9px]">
+          <p className="mt-8 max-w-6xl break-all px-2 text-center font-mono text-md leading-tight print:mt-[2.5mm] print:text-[9px] text-black">
             {target}
           </p>
 
