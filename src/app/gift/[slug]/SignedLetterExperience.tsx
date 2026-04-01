@@ -32,8 +32,50 @@ const BOOK_META: Record<string, BookMeta> = {
     title: "สิ้นสุดทางเชื่อ",
     writers: [
       {
+        key: "army",
+        name: "อาร์มี่",
+        note: "-",
+        fallbackImage: "/pung-ranger-logo.png",
+      },
+      {
+        key: "game",
+        name: "เกม",
+        note: "ฝากถึงผู้อ่าน: ขอบคุณที่เชื่อในเสียงของตัวเองและเดินทางมาด้วยกัน",
+        fallbackImage: "/signed-pungranger/game.png",
+      },
+      {
+        key: "kamlha",
+        name: "คำหล้า",
+        note: "ฝากถึงผู้อ่าน: ขอบคุณที่เชื่อในเสียงของตัวเองและเดินทางมาด้วยกัน",
+        fallbackImage: "/signed-pungranger/kamlha.png",
+      },
+      {
+        key: "top",
+        name: "ท็อป",
+        note: "ฝากถึงผู้อ่าน: ขอบคุณที่เชื่อในเสียงของตัวเองและเดินทางมาด้วยกัน",
+        fallbackImage: "pung-ranger-logo.png",
+      },
+      {
+        key: "poon",
+        name: "ปูน",
+        note: "ฝากถึงผู้อ่าน: ขอบคุณที่เชื่อในเสียงของตัวเองและเดินทางมาด้วยกัน",
+        fallbackImage: "/signed-pungranger/poon.png",
+      },
+      {
+        key: "shefon",
+        name: "ชีฝน",
+        note: "ฝากถึงผู้อ่าน: ขอบคุณที่เชื่อในเสียงของตัวเองและเดินทางมาด้วยกัน",
+        fallbackImage: "/signed-pungranger/shefon.png",
+      },
+      {
         key: "machu",
         name: "มาชู",
+        note: "ฝากถึงผู้อ่าน: ขอบคุณที่เชื่อในเสียงของตัวเองและเดินทางมาด้วยกัน",
+        fallbackImage: "/pung-ranger-logo.png",
+      },
+      {
+        key: "mark",
+        name: "มาร์ค",
         note: "ฝากถึงผู้อ่าน: ขอบคุณที่เชื่อในเสียงของตัวเองและเดินทางมาด้วยกัน",
         fallbackImage: "/pung-ranger-logo.png",
       },
@@ -43,6 +85,12 @@ const BOOK_META: Record<string, BookMeta> = {
         note: "ฝากถึงผู้อ่าน: ขอบคุณที่เชื่อในเสียงของตัวเองและเดินทางมาด้วยกัน",
         fallbackImage: "/pung-ranger-logo.png",
       },
+      {
+        key: "tob",
+        name: "ต๊อบ",
+        note: "ฝากถึงผู้อ่าน: ขอบคุณที่เชื่อในเสียงของตัวเองและเดินทางมาด้วยกัน",
+        fallbackImage: "/pung-ranger-logo.png",
+      }
     ],
   },
   china: {
@@ -363,29 +411,37 @@ export default function SignedLetterExperience({ gift }: SignedLetterExperienceP
                   })}
                 </div>
 
-                {/* Writer sub-tabs */}
+                {/* Writer sub-tabs — horizontal scroll on narrow screens */}
                 {hasMultipleWriters && (
-                  <div className="sl-stagger-2 flex gap-2">
-                    {bookMeta.writers.map((writer) => {
-                      const isActive = activeWriterKey === writer.key;
-                      return (
-                        <button
-                          key={writer.key}
-                          type="button"
-                          onClick={() => {
-                            setActiveWriterKey(writer.key);
-                            setImageLoadError(false);
-                          }}
-                          className={`rounded-xl border px-4 py-2 text-xs font-medium transition-all duration-200 sm:text-sm ${
-                            isActive
-                              ? "border-emerald-400/50 bg-emerald-500/15 text-emerald-100 shadow-[0_0_16px_rgba(16,185,129,0.12)]"
-                              : "border-zinc-700/80 bg-zinc-900/60 text-zinc-500 hover:border-zinc-500 hover:text-zinc-300"
-                          }`}
-                        >
-                          {writer.name}
-                        </button>
-                      );
-                    })}
+                  <div className="sl-stagger-2 space-y-2">
+                    <p className="px-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-500/70 sm:text-xs">
+                      เลือกนักเขียน
+                    </p>
+                    <div
+                      className="-mx-1 flex snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain px-1 pb-1.5 [scrollbar-color:rgba(63,63,70,0.65)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-zinc-600/80 [&::-webkit-scrollbar-track]:bg-transparent"
+                      style={{ WebkitOverflowScrolling: "touch" }}
+                    >
+                      {bookMeta.writers.map((writer) => {
+                        const isActive = activeWriterKey === writer.key;
+                        return (
+                          <button
+                            key={writer.key}
+                            type="button"
+                            onClick={() => {
+                              setActiveWriterKey(writer.key);
+                              setImageLoadError(false);
+                            }}
+                            className={`shrink-0 snap-start rounded-full border px-4 py-2 text-xs font-medium transition-all duration-200 sm:px-5 sm:text-sm ${
+                              isActive
+                                ? "border-emerald-400/55 bg-emerald-500/18 text-emerald-50 shadow-[0_0_20px_rgba(16,185,129,0.18)] ring-1 ring-emerald-400/20"
+                                : "border-zinc-700/80 bg-zinc-900/70 text-zinc-400 hover:border-emerald-700/50 hover:text-zinc-200"
+                            }`}
+                          >
+                            {writer.name}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 )}
 
