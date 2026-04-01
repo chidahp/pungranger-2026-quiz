@@ -61,7 +61,7 @@ export default function PrintTicketClient({
         @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@100;200;300;400;500;600;700&family=Noto+Sans+Thai:wght@100..900&display=swap');
 
         .ticket-sheet {
-          font-family: 'IBM Plex Sans Thai', 'Noto Sans Thai', sans-serif;
+          font-family: "Noto Sans Thai", sans-serif;
         }
 
         @page {
