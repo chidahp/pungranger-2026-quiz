@@ -4,7 +4,7 @@ type PrintPageProps = {
   searchParams: Promise<{
     slug?: string;
     target?: string;
-    customerName?: string;
+    customer_name?: string;
   }>;
 };
 
@@ -15,7 +15,7 @@ const GIFT_PATH_PREFIX = "/gift";
 export default async function QrPrintPage({ searchParams }: PrintPageProps) {
   const params = await searchParams;
   const slug = params.slug?.trim() ?? "";
-  const customerName = params.customerName?.trim() ?? "";
+  const customerName = params.customer_name?.trim() ?? "";
   const base = FALLBACK_BASE_URL.replace(/\/$/, "");
   const target =
     params.target?.trim() ||
