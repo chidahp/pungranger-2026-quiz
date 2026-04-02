@@ -34,7 +34,7 @@ const BOOK_META: Record<string, BookMeta> = {
       {
         key: "army",
         name: "อาร์มี่",
-        note: "-",
+        note: "I believe in you!",
         fallbackImage: "/pung-ranger-logo.png",
       },
       {
