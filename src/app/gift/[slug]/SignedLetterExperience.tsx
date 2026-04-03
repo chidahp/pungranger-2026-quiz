@@ -70,8 +70,8 @@ const BOOK_META: Record<string, BookMeta> = {
       {
         key: "machu",
         name: "มาชู",
-        note: "ฝากถึงผู้อ่าน: ขอบคุณที่เชื่อในเสียงของตัวเองและเดินทางมาด้วยกัน",
-        fallbackImage: "/pung-ranger-logo.png",
+        note: "ไม่รู้จะบอกอะไร คุณมีอะไรจะบอกผมมั้ย?",
+        fallbackImage: "/signed-pungranger/machu.png",
       },
       {
         key: "mark",
